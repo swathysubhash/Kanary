@@ -1,0 +1,144 @@
+<div class="row-fluid c-nav" ng-init="initialize()">	
+	<div class='navbar navbar-fixed-top'>
+		<div class='navbar-inner c-top-nav'>
+			<div class='container-fluid'>
+				<a href="#" class="brand c-brand">KANARY</a>
+				<div class="nav-collapse">
+					<ul class="nav">
+						<li class="dropdown btn-group offset1" ng-init="getWS()">
+							<button type="button" class="btn btn-primary c-btn10 c-btn-primary" ng-bind="selectedWorkspace">
+  							</button>
+  							<button type="button" class="btn btn-primary dropdown-toggle c-btn-primary" data-toggle="dropdown">
+    							<span class="caret w-caret"></span>
+  							</button>
+							<ul class="dropdown-menu" role="button">
+								<li ng-repeat="workspace in workspaces" ng-click="setWorkspace(workspace)">
+									<a ng-bind="workspace.name"></a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<form class="navbar-search">
+				<input type="text" class="search-query c-search-query" ng-model="searchValue" placeholder="Search">
+				</form>
+				<button type="button" class="btn btn-danger pull-right" ng-click="openApiTokenModal()">Set Api Token</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row-fluid content c-main-content">
+	<div class="sidebar-nav span3 c-sidebar sub-content">
+		 <ul class="nav nav-list span3 c-sidenav affix">
+		 <li class="nav-header c-nav-header">
+		 <h5>PROJECTS</h5> 
+		 </li>
+		 <li class="c-nav-element" ng-click="setProject(project)" ng-class="{active: projectClass(project)}" ng-repeat="project in workspace.projects">
+		 {{project.name}}
+		 </li>
+		 </ul>
+  	</div>
+  	<div class="span6 c-main sub-content">
+  		<div class="c-header padding10">
+  		 <h4 class="c-inline">TASKS</h4>
+  		 <span class="offset3">
+  		 	<label class="c-inline"><strong>Sort by:</strong></label>
+			<li class="dropdown btn-group">
+				<button type="button" class="btn c-btn10" ng-bind="sorters.selectedItem.name">
+				</button>
+				<button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="button">
+					<li ng-repeat="sorter in sorters" ng-click="setSortBy(sorter)">
+						<a ng-bind="sorter.name"></a>
+					</li>
+				</ul>
+			</li>
+  		 </span>
+  		</div>
+  		<accordion close-others="oneAtATime">
+    		<accordion-group ng-repeat="task in project.tasks | filter:searchValue | orderBy: sorters.selectedItem.value" class="c-accordian-group">
+    			<accordion-heading>
+  				{{task.title}}
+  				</accordion-heading>
+      			<p>{{task.description}}</p>
+      			<table class="table table-condensed table-bordered c-table">
+      				<tbody>
+      					<tr>
+      						<td><span>Priority</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.priority}}</span></td>
+      						<td><span>Column</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.column}}</span></td>
+      					</tr>
+      					<tr>
+      						<td><span>Estimate</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.estimate}}</span></td>
+      						<td><span>Type</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.type}}</span></td>
+      					</tr>
+      					<tr>
+      						<td><span>Created At</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.created_at | date:'MM/dd/yyyy @ h:mma'}}</span></td>
+      						<td><span>Updated At</span></td>
+      						<td><span>:</span></td>
+      						<td><span>{{task.updated_at | date:'MM/dd/yyyy @ h:mma'}}</span></td>
+      					</tr>
+      				</tbody>
+      			</table>
+    		</accordion-group>
+  		</accordion>
+  	</div>
+  	<div class="c-main sub-content">
+  		<div class="c-header padding10">
+  		 <h5 class="c-inline">STATUS</h5>
+  		</div>
+		<div class="c-header padding10">
+			<ul class="nav nav-pills margin-b-0">
+				<li ng-click="setChartView()" ng-class="{active: isChartView()}">
+					<a>Charts</a>
+				</li>
+				<li ng-click="setDetailView()" ng-class="{active: isDetailView()}">
+					<a>Details</a>
+				</li>
+			</ul>
+		</div>
+		<div class="row-fluid" ng-class="{'c-no-dis': isDetailView()}">
+			<div class="c-header padding10">
+				<h6 class="c-inline">Columns vs Count</h6>
+			</div>
+			<div class="row-fluid">
+				<div class="statusChart c-offset20"></div>
+			</div>
+			<div class="c-header padding10">
+				<h6 class="c-inline">Issues Trend</h6>
+			</div>
+			<div class="row-fluid">
+				<div class="issuesChart c-offset10"></div>
+			</div>
+		</div>
+		<div class="row-fluid" ng-class="{'c-no-dis': isChartView()}">
+			<div class="padding10">
+				<table class="table table-condensed table-bordered c-table">
+					<thead class="c-table-header">
+						<td>Column</td>
+						<td></td>
+						<td>Count</td>
+					</thead>
+					<tbody class="c-table-body">
+						<tr ng-repeat="stat in project.status">
+							<td>{{stat.column}}</td>
+							<td>=></td>
+							<td>{{stat.count}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+  	</div>
+</div>
