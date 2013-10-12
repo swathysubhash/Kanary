@@ -7,7 +7,9 @@ Developed with
 
 Angular JS,
 Bootstrap css,
-D3.js
-dc.js
+D3.js,
+crossfilter.js
+dc.js,
+Yeoman
 
 KANBANERY REST API's
